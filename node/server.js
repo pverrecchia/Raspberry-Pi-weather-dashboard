@@ -13,7 +13,7 @@ var con = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "password",
-  database: "database"
+  database: "rpi_database"
 });
 
 con.connect(function(err) {
