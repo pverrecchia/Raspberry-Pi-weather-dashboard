@@ -1,0 +1,12 @@
+[Service]
+WorkingDirectory=/home/pi/Documents/projects/weather_dashboard
+ExecStart=/usr/local/bin/node //home/pi/Documents/projects/weather_dashboard/app.js
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=propanel
+User=root
+Group=root
+Environment=NODE_ENV=production
+[Install]
+WantedBy=multi-user.target

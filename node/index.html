@@ -1,0 +1,174 @@
+<head>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.js"></script>
+</head>
+
+<body>
+<h1>Weather Dashboard</h1>
+<h2>Current readings</h2>
+<p id="temp" ></p>
+<p id="pressure" ></p>
+<p id="humidity" ></p>
+<p id="time" ></p>
+
+<h2>Historical data</h2>
+
+<canvas id="temperatureChart" width="400" height="400"></canvas>
+<canvas id="pressureChart" width="400" height="400"></canvas>
+<canvas id="humidityChart" width="400" height="400"></canvas>
+
+<script type="text/javascript">
+	var dateTime = [];
+	var temperature = [];
+	var pressure = [];
+	var humidity = [];
+	var length;
+	var s = 4; //scale factor
+	var data = [];
+	var days = 3;
+	url = "/data?days=" + days;
+	
+	$.get(url, function(data){
+		length = data.length;
+	
+		//decimnation of data
+		
+
+		for (i=(Math.floor(length/s)); i>0; i--){
+			dateTime[i-1] = data[((length%s)+i*s)-1].dateTime;
+			temperature[i-1] = data[((length%s)+i*s)-1].temperature;
+			pressure[i-1] = data[((length%s)+i*s)-1].pressure;
+			humidity[i-1] = data[((length%s)+i*s)-1].humidity;
+		}	
+
+		
+		/*
+		for (i=0; i<length; i++){
+			dateTime[i] = data[i].dateTime;
+			temperature[i] = data[i].temperature;
+			pressure[i] = data[i].pressure;
+			humidity[i] = data[i].humidity;
+		}	*/
+
+		document.getElementById("temp").innerHTML = "Temperature: " + temperature[temperature.length-1] + " &#8451;";
+		document.getElementById("pressure").innerHTML = "Pressure: " + pressure[pressure.length-1] + " hPa";
+		document.getElementById("humidity").innerHTML = "Humidity: " + humidity[humidity.length-1] + " &#37;";
+		document.getElementById("time").innerHTML = "<i>As of "+ dateTime[dateTime.length-1] + "</i>";
+	
+
+
+		//Generate charts
+
+		//TEMPERATURE CHART
+		var tContext = document.getElementById("temperatureChart");
+		tContext.width= window.innerWidth-100;
+		tContext.height=500;
+		var myChart = new Chart(tContext, {
+			type: 'line',
+			data: {
+				labels: dateTime,
+				datasets: [{
+					label: 'Temperature',
+					backgroundColor: 'rgba(0,0,128,0.2)',
+					data: temperature,
+					borderWidth : 1
+					}]
+			},
+			options: {
+				title: {
+            				display: true,
+            				text: 'Historical Temperature'
+        			},
+				responsive: false,
+				maintainAspectRatio: true,
+				scales: {
+					yAxes: [{
+						scaleLabel:{
+							display: true,
+							labelString: 'Degrees \(Celsius\)'
+						}
+					}]
+				}
+			}	
+
+
+		});
+
+
+		//PRESSURE CHART
+
+		var pContext = document.getElementById("pressureChart");
+		pContext.width= window.innerWidth-100;
+		pContext.height=500;
+		var myChart = new Chart(pContext, {
+			type: 'line',
+			data: {
+				labels: dateTime,
+				datasets: [{
+					label: 'Pressure',
+					backgroundColor: 'rgba(0,128,128,0.2)',
+					data: pressure,
+					borderWidth : 1
+					}]
+			},
+			options: {
+				title: {
+            				display: true,
+            				text: 'Historical Pressure'
+        			},
+				responsive: false,
+				maintainAspectRatio: true,
+				scales: {
+                                        yAxes: [{
+                                                scaleLabel:{
+                                                        display: true,
+                                                        labelString: 'Pressure \(hPa\)'
+                                                }
+                                        }]
+                                }
+			}
+
+
+		});
+
+		
+		//HUMIDITY CHART
+
+		var hContext = document.getElementById("humidityChart");
+		hContext.width= window.innerWidth-100;
+		hContext.height=500;
+		var myChart = new Chart(hContext, {
+			type: 'line',
+			data: {
+				labels: dateTime,
+				datasets: [{
+					label: 'Humidity',
+					backgroundColor: 'rgba(128,128,0,0.2)',
+					data: humidity,
+					borderWidth : 1
+					}]
+			},
+			options: {
+				title: {
+            				display: true,
+            				text: 'Historical Humidity'
+        			},
+				responsive: false,
+				scales: {
+                                        yAxes: [{
+                                                scaleLabel:{
+                                                        display: true,
+                                                        labelString: 'Humidity \(%\)'
+                                                }
+                                        }]
+                                }
+			}
+
+
+		});
+	});
+
+</script>
+
+
+</body>
