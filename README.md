@@ -1,7 +1,7 @@
 # Raspberry-Pi-weather-dashboard
 Measure weather data with Python, log it to MySQL, and view it in a dashboard over the local network with Node.js
 
-This isn't a new concept my any means but it's my first Pi project and I've documented the steps I took to set it up. End to end, here what it does:
+This isn't a new concept by any means but it's my first Pi project and I've documented the steps I took to set it up. End to end, here's what it does:
 
 - A Python script polls temperature, pressure and humidity every 5 minutes
 - Sensor data is written to a MySQL database running on the Pi
