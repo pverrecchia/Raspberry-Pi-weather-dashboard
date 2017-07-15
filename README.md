@@ -1,5 +1,5 @@
 # Raspberry-Pi-weather-dashboard
-Measure weather data with Python, log it to MySQL, and view it in a dashboard over the local network with by Node.js
+Measure weather data with Python, log it to MySQL, and view it in a dashboard over the local network with Node.js
 
 This isn't a new concept my any means but it's my first Pi project and I've documented the steps I took to set it up. End to end, here what it does:
 
@@ -11,7 +11,7 @@ This isn't a new concept my any means but it's my first Pi project and I've docu
 
 ## Part 1: Measuring weather data
 
-I used the BME280 sensor together with [Adafruit's BME280 Python libray](https://github.com/adafruit/Adafruit_Python_BME280). It is pretty straightforward to use the example script to initialize the sensor and begin reading the data.
+I used the BME280 sensor which measures temperature, humidity, and atmospheric pressure, together with [Adafruit's BME280 Python libray](https://github.com/adafruit/Adafruit_Python_BME280). It is pretty straightforward to use the example script to initialize the sensor and begin reading the data.
 
 ## Part 2: Configuring MySQL and writing data to it
 
@@ -30,15 +30,9 @@ CREATE TABLE weather_data (DATETIME dateTime, FLOAT(4,2) temperature, FLOAT(6,2)
 
 FLOAT(X,Y) will declare a float with Y digits to the right of the decimal point and X digits total.
 
-Now that the table is set up, the sensor-reading python script needs to be updated to write to it.
+Now that the table is set up, the sensor-reading python script needs to be updated to write to it. This isn't too difficult to follow in weather.py. Import MySQLdb, make a connection a cursor object, execute and commit the INSERT, and then close down the cursor and conenction at the end.
 
--connect to db using credentials and db name
--use INSERT command
-
-
-<find tutorial>
-
-## Part 3: Scheduling sensor readings
+### Part 2a: Automating sensor readings
 
 I chose to use crontab to schedule the python script so it runs every 5 minutes. Access the crontab editor via
 
@@ -46,29 +40,31 @@ I chose to use crontab to schedule the python script so it runs every 5 minutes.
 
 For more details on how crontab works, I suggest [this explanation](http://kvz.io/blog/2007/07/29/schedule-tasks-on-linux-using-crontab/) but to get my script to run every 5 minutes, I used:
 
-`crontab entry`
+`*/5 * * * * /home/pi/Documents/projects/weather_dashboard/weather.py`
 
-There are two more minor steps before the script will run automatically. First, add
+There are two more minor steps before the script will run automatically. First, add `#!/usr/bin/env python` to the _very first_ line of the python script, as this will allow it to be executable. We also need to set executable permissions on the file itself using `sudo chmod +x weather.py`
 
-`shebang` to the _very first_ line of the python script, as that will allow it to be executable. We also need to set executable permissions on the file itself using `sudo chmod +x weather.py`
+Now, the Python script will run every 5 minutes and log the sensor data to the MySQL table!
 
-Now, the python script will run every 5 minutes and log the sensor data to the MySQL table!
+## Part 3: Node.js server
 
-## Part 4: Node.js server
+I chose to use Node.js together with the [Express framework](https://expressjs.com/en/starter/installing.html) to set up a basic web server that will allow other devices on the local network to access the data in the database. The Node.js (server.js) does a few things:
 
-I chose to use Node.js and the [Express framework](https://expressjs.com/en/starter/installing.html) to set up a basic webserver that will allow other devices on the local network to access the data in the databaseThe Node.js (server.js) does a few things:
+- Connects to the MySQL database in a manner similar to the script. Useful info [here](https://www.w3schools.com/nodejs/nodejs_mysql.asp)
+- Listens on port 8080 
+- Sets up a homepage to return an index.html
+- Sets up a very simple data handler that queries the MySQL database (optional but I wanted to try using a handler and query parameters)
 
--link it to the database
--choose a port to listen on
--Setup homepage to return index.html
--Setup a data api to handle request for data from index.html 
+### Part 3a: Automating starting the server
 
-I also configured the node server to start automatically when the Pi powers up. I attempted to use crontab for this as well but it didn't seem to work properly. I tried a few strategies but was ultimately successful after finding [this forum post](https://www.raspberrypi.org/forums/viewtopic.php?f=63&t=138861)
+I also configured the node server to start automatically when the Pi powers up. I attempted to use crontab for this as well but it didn't work properly. I tried a few strategies but was ultimately successful after finding [this forum post](https://www.raspberrypi.org/forums/viewtopic.php?f=63&t=138861). It involves creating a .service file and copying it to /tc/systemd/system. 
 
-## Part 5: Making a dashboard
+Now the Pi will automatically start the server and record data once powered on. This will make it easy to box up and plug in anywhere.
 
-Lastly, I made a very simple dashboard (index.html) that will display the data retrieved from the database. The most recent measurements are showed at the top of the dashboard. Three charts show the 3-day trailing measurements of temperature, humidity and pressure.
+## Part 4: Making a dashboard
 
--Call the data endpoint and Query string to select amount of data
--experiementing with data decimation to not crowd graphs.
--chart.js  
+Lastly, I made a very simple dashboard that will display the data retrieved from the database. When I navigate to <RaspberryPi_IP>:8080 in my broswer, index.html will be returned as per Part 3. In index.html, a jQuery GET call is made to the server's /data handler which queries the DB and returns the measurments to the client.
+
+The most recent measurements are showed at the top of the dashboard. Three charts show the 3-day trailing measurements of temperature, humidity and pressure. The number of days is controllable in the jQuery GET call. I may eventually be expose this in the form of a drop-down. 
+
+After the data is returned, I used Chart.js to make some nice and simple plots! 
