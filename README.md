@@ -8,6 +8,10 @@ This isn't a new concept my any means but it's my first Pi project and I've docu
 - A Node.js server also running on the Pi querys MySQL when data is needed
 - Users can view a basic dashboard to view the most recent sensor readings and historical data plots
 
+![dashboard](http://i.imgur.com/NE457Te.jpg)
+
+
+_Interesting note: the spikes in temperature and pressure in the image above show the environmental changes between me working in my highrise apartment and a local makerspace at ground level. Also, the small oscillations in temperature indicate when the air conditiong was turned on in the apartment!_
 
 ## Part 1: Measuring weather data
 
