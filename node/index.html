@@ -28,12 +28,11 @@
 	var days = 3;
 	url = "/data?days=" + days;
 	
+	//GET call to server
 	$.get(url, function(data){
 		length = data.length;
 	
 		//decimnation of data
-		
-
 		for (i=(Math.floor(length/s)); i>0; i--){
 			dateTime[i-1] = data[((length%s)+i*s)-1].dateTime;
 			temperature[i-1] = data[((length%s)+i*s)-1].temperature;
@@ -42,22 +41,11 @@
 		}	
 
 		
-		/*
-		for (i=0; i<length; i++){
-			dateTime[i] = data[i].dateTime;
-			temperature[i] = data[i].temperature;
-			pressure[i] = data[i].pressure;
-			humidity[i] = data[i].humidity;
-		}	*/
-
 		document.getElementById("temp").innerHTML = "Temperature: " + temperature[temperature.length-1] + " &#8451;";
 		document.getElementById("pressure").innerHTML = "Pressure: " + pressure[pressure.length-1] + " hPa";
 		document.getElementById("humidity").innerHTML = "Humidity: " + humidity[humidity.length-1] + " &#37;";
 		document.getElementById("time").innerHTML = "<i>As of "+ dateTime[dateTime.length-1] + "</i>";
 	
-
-
-		//Generate charts
 
 		//TEMPERATURE CHART
 		var tContext = document.getElementById("temperatureChart");
@@ -169,6 +157,5 @@
 	});
 
 </script>
-
 
 </body>
