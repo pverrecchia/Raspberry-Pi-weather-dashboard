@@ -15,7 +15,7 @@ _Interesting note: the spikes in temperature and pressure in the image above sho
 
 ## Part 1: Measuring weather data
 
-I used the BME280 sensor which measures temperature, humidity, and atmospheric pressure, together with [Adafruit's BME280 Python libray](https://github.com/adafruit/Adafruit_Python_BME280). It is pretty straightforward to use the example script to initialize the sensor and begin reading the data.
+I used the BME280 sensor which measures temperature, humidity, and atmospheric pressure, together with [Adafruit's BME280 Python library](https://github.com/adafruit/Adafruit_Python_BME280). It is pretty straightforward to use the example script to initialize the sensor and begin reading the data.
 
 ## Part 2: Configuring MySQL and writing data to it
 
@@ -24,17 +24,17 @@ Note that we want the MySQL Python library in addition to MySQL itself which is 
 
 `sudo apt-get install mysql-server python-mysqldb`
 
-After I chose a username + password for the MySQL setup I created` a single database and a single table via:
+After I chose a username + password for the MySQL setup I created a single database and a single table via:
 
 ```
-CREATE DATABASE rpi_Database;
+CREATE DATABASE rpi_database;
 USE rpi_database;
 CREATE TABLE weather_data (DATETIME dateTime, FLOAT(4,2) temperature, FLOAT(6,2) pressure, FLOAT(5,2) humidity)
 ```
 
 FLOAT(X,Y) will declare a float with Y digits to the right of the decimal point and X digits total.
 
-Now that the table is set up, the sensor-reading python script needs to be updated to write to it. This isn't too difficult to follow in weather.py. Import MySQLdb, make a connection a cursor object, execute and commit the INSERT, and then close down the cursor and conenction at the end.
+Now that the table is set up, the sensor-reading python script needs to be updated to write to it. This isn't too difficult to follow in weather.py. Import MySQLdb, make a connection, a cursor object, execute and commit the INSERT operation, and then close down the cursor and connection at the end.
 
 ### Part 2a: Automating sensor readings
 
@@ -59,16 +59,16 @@ I chose to use Node.js together with the [Express framework](https://expressjs.c
 - Sets up a homepage to return an index.html
 - Sets up a very simple data handler that queries the MySQL database (optional but I wanted to try using a handler and query parameters)
 
-### Part 3a: Automating starting the server
+### Part 3a: Automating server startup
 
 I also configured the node server to start automatically when the Pi powers up. I attempted to use crontab for this as well but it didn't work properly. I tried a few strategies but was ultimately successful after finding [this forum post](https://www.raspberrypi.org/forums/viewtopic.php?f=63&t=138861). It involves creating a .service file and copying it to /tc/systemd/system. 
 
-Now the Pi will automatically start the server and record data once powered on. This will make it easy to box up and plug in anywhere.
+Now the Pi will automatically start the server and record measurement once powered on. This will make it easy to box up and plug in anywhere.
 
 ## Part 4: Making a dashboard
 
 Lastly, I made a very simple dashboard that will display the data retrieved from the database. When I navigate to <RaspberryPi_IP>:8080 in my broswer, index.html will be returned as per Part 3. In index.html, a jQuery GET call is made to the server's /data handler which queries the DB and returns the measurments to the client.
 
-The most recent measurements are showed at the top of the dashboard. Three charts show the 3-day trailing measurements of temperature, humidity and pressure. The number of days is controllable in the jQuery GET call. I may eventually be expose this in the form of a drop-down. 
+The most recent measurements are displayed at the top of the dashboard. Three charts show the 3-day trailing measurements of temperature, humidity and pressure. The number of days is controllable in the jQuery GET call. I may eventually expose this in the form of a drop-down selector. 
 
 After the data is returned, I used Chart.js to make some nice and simple plots! 
