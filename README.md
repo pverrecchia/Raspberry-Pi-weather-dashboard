@@ -71,4 +71,4 @@ Lastly, I made a very simple dashboard that will display the data retrieved from
 
 The most recent measurements are displayed at the top of the dashboard. Three charts show the 3-day trailing measurements of temperature, humidity and pressure. The number of days is controllable in the jQuery GET call. I may eventually expose this in the form of a drop-down selector. 
 
-After the data is returned, I used Chart.js to make some nice and simple plots! 
+After the data is returned, I used Chart.js to make some nice and simple plots! I experimented with decimenating the data by a factor of 4 to reduce the amount of data points displayed on the charts. Data is collected every 5 minutes but the plotted points are 20 minutes apart.
