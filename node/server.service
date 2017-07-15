@@ -1,10 +1,10 @@
 [Service]
 WorkingDirectory=/home/pi/Documents/projects/weather_dashboard
-ExecStart=/usr/local/bin/node //home/pi/Documents/projects/weather_dashboard/app.js
+ExecStart=/usr/local/bin/node //home/pi/Documents/projects/weather_dashboard/server.js
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=propanel
+SyslogIdentifier=weather_dashboard
 User=root
 Group=root
 Environment=NODE_ENV=production
