@@ -52,11 +52,11 @@ Now, the Python script will run every 5 minutes and log the sensor data to the M
 
 ## Part 3: Node.js server
 
-I chose to use Node.js together with the [Express framework](https://expressjs.com/en/starter/installing.html) to set up a basic web server that will allow other devices on the local network to access the data in the database. The Node.js (server.js) does a few things:
+I chose to use Node.js together with the [Express framework](https://expressjs.com/en/starter/installing.html) to set up a basic web server that will allow other devices on the local network to access the data in the database. The Node.js server does a few things:
 
-- Connects to the MySQL database in a manner similar to the script. Useful info [here](https://www.w3schools.com/nodejs/nodejs_mysql.asp)
+- Connects to the MySQL database in a manner similar to the Python script. Useful info [here](https://www.w3schools.com/nodejs/nodejs_mysql.asp)
 - Listens on port 8080 
-- Sets up a homepage to return an index.html
+- Sets up a homepage to return an index.html file 
 - Sets up a very simple data handler that queries the MySQL database (optional but I wanted to try using a handler and query parameters)
 
 ### Part 3a: Automating server startup
@@ -69,6 +69,6 @@ Now the Pi will automatically start the server and record measurement once power
 
 Lastly, I made a very simple dashboard that will display the data retrieved from the database. When I navigate to <RaspberryPi_IP>:8080 in my broswer, index.html will be returned as per Part 3. In index.html, a jQuery GET call is made to the server's /data handler which queries the DB and returns the measurments to the client.
 
-The most recent measurements are displayed at the top of the dashboard. Three charts show the 3-day trailing measurements of temperature, humidity and pressure. The number of days is controllable in the jQuery GET call. I may eventually expose this in the form of a drop-down selector. 
+The most recent measurements are displayed at the top of the dashboard. Three charts show the 3-day trailing measurements of temperature, humidity and pressure. The number of days is controllable in the jQuery GET call as a query string parameter. I may eventually expose this in the form of a drop-down selector. 
 
 After the data is returned, I used Chart.js to make some nice and simple plots! I experimented with decimenating the data by a factor of 4 to reduce the amount of data points displayed on the charts. Data is collected every 5 minutes but the plotted points are 20 minutes apart.
